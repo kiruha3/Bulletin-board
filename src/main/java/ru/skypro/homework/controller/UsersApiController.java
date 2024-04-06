@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UpdateUserDto;
@@ -23,6 +20,7 @@ import java.io.IOException;
 @Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-06T11:46:42.537169258Z[GMT]")
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
+@RequestMapping(value = "users")
 public class UsersApiController {
 
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
@@ -37,6 +35,7 @@ public class UsersApiController {
         this.request = request;
     }
 
+    @GetMapping(value = "/users/me")
     public ResponseEntity<UserDto> getUser() {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -51,11 +50,14 @@ public class UsersApiController {
         return new ResponseEntity<UserDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    //TODO think about
+    @PostMapping(value = "/users/set_password")
     public ResponseEntity<Void> setPassword(@Valid @RequestBody NewPasswordDto body) {
         String accept = request.getHeader("Accept");
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @PatchMapping(value = "/users/me")
     public ResponseEntity<UpdateUserDto> UpdateUserDto(@Valid @RequestBody UpdateUserDto body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -70,7 +72,8 @@ public class UsersApiController {
         return new ResponseEntity<UpdateUserDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Void> updateUserImage( @Valid @RequestPart(value = "image", required = false) MultipartFile image) {
+    @PatchMapping(value = "/users/me/image")
+    public ResponseEntity<Void> updateUserImage(@Valid @RequestPart(value = "image", required = false) MultipartFile image) {
         String accept = request.getHeader("Accept");
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }

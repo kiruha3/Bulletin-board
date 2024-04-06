@@ -20,7 +20,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
+
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         if (authService.login(loginDto.getUsername(), loginDto.getPassword())) {
             return ResponseEntity.ok().build();
@@ -29,7 +29,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/register")
+
     public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
         if (authService.register(registerDto)) {
             return ResponseEntity.status(HttpStatus.CREATED).build();

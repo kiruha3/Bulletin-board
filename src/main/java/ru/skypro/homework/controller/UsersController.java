@@ -10,26 +10,25 @@ import ru.skypro.homework.dto.UserDto;
 
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
-@RequestMapping("/users")
 public class UsersController {
 
-    @PostMapping("/set_password")
+
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto dto) {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/me")
+
     public ResponseEntity<UserDto> getUser() {
         UserDto dto = new UserDto();
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/me")
+
     public ResponseEntity<UpdateUserDto> updateUser(@RequestBody UpdateUserDto dto) {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/me/image")
+
     public ResponseEntity<Void> updateUserImage(MultipartFile image) {
         return ResponseEntity.status(HttpStatus.OK).build();
     }

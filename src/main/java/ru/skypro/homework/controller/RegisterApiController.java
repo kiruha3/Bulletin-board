@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.RegisterDto;
@@ -30,7 +31,7 @@ public class RegisterApiController {
         this.objectMapper = objectMapper;
         this.request = request;
     }
-
+    @PostMapping(value = "/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto body) {
         String accept = request.getHeader("Accept");
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
