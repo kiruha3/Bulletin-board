@@ -1,13 +1,19 @@
 package ru.skypro.homework.dto;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class UpdateUserDto {
+public class RegisterDto {
+
     /**
-     * UpdateUser
+     * Register
      */
+    @JsonProperty("username")
+    private String username;
+
+    @JsonProperty("password")
+    private String password;
+
     @JsonProperty("firstName")
     private String firstName;
 
@@ -17,5 +23,6 @@ public class UpdateUserDto {
     @JsonProperty("phone")
     private String phone;
 
-
+    @JsonProperty("role")
+    private Role role;
 }

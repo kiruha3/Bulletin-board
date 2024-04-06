@@ -9,8 +9,9 @@ import ru.skypro.homework.dto.UpdateUserDto;
 import ru.skypro.homework.dto.UserDto;
 
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/users")
-public class UserController {
+public class UsersController {
 
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto dto) {
