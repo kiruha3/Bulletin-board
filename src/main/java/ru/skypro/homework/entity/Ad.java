@@ -3,20 +3,22 @@ package ru.skypro.homework.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.awt.*;
+import java.time.LocalDateTime;
 
 @Data
-@Entity(name = "ads")
+@Entity
 public class Ad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer pk;
-    private String image;
+    private Long id;
+    @OneToOne
+    private User user;//author
     private Integer price;
     private String title;
+    @OneToOne
+    private Image image;//
     private String description;
-
-    @ManyToOne
-    @JoinColumn
-    private User user;
+    private LocalDateTime dateTime;
 }

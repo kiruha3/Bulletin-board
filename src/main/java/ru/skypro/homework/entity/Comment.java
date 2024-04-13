@@ -1,24 +1,18 @@
 package ru.skypro.homework.entity;
 
+import java.util.List;
 import lombok.Data;
+import ru.skypro.homework.dto.comments.CommentDto;
 
 import javax.persistence.*;
 
 @Data
-@Entity(name = "comments")
+@Entity
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer pk;
-    @JoinColumn()
+    private Long id;
+    private Integer count;
     @ManyToOne
-    Ad ad;
-
-    @JoinColumn()
-    @ManyToOne
-    User user;
-
-    long createdAt;
-
-    String text;
+    private User user;
 }
