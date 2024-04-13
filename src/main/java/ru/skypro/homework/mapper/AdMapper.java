@@ -16,9 +16,9 @@ public class AdMapper {
     public AdDto toAdDto(Ad ad) {
         AdDto adDto = new AdDto();
 
-        adDto.setPk(ad.getPk());
-        adDto.setAuthor(ad.getUser().getId());
-        adDto.setImage("/" + ad.getPk() + "/image");
+        adDto.setPk(Math.toIntExact(ad.getId()));
+        adDto.setAuthor(Math.toIntExact(ad.getUser().getId()));
+        adDto.setImage(String.valueOf(ad));
         adDto.setPrice((ad.getPrice()));
         adDto.setTitle(ad.getTitle());
 
@@ -51,12 +51,12 @@ public class AdMapper {
     public ExtendedAdDto toExtendedAdDto(Ad ad) {
         ExtendedAdDto extendedAdDto = new ExtendedAdDto();
 
-        extendedAdDto.setPk(ad.getPk());
+        extendedAdDto.setPk(Math.toIntExact(ad.getId()));
         extendedAdDto.setAuthorFirstName(ad.getUser().getFirstName());
         extendedAdDto.setAuthorLastName(ad.getUser().getLastName());
         extendedAdDto.setDescription(ad.getDescription());
         extendedAdDto.setEmail(ad.getUser().getEmail());
-        extendedAdDto.setImage("/" + ad.getPk() + "/image");
+        extendedAdDto.setImage("/" + ad.getImage() + "/image");
         extendedAdDto.setPhone(ad.getUser().getPhone());
         extendedAdDto.setPrice(ad.getPrice());
         extendedAdDto.setTitle(ad.getTitle());

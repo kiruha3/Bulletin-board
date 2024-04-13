@@ -11,12 +11,12 @@ public class UserMapper {
     public UserDto toDto(User user) {
         UserDto dto = new UserDto();
 
-        dto.setId(user.getId());
+        dto.setId(Math.toIntExact(user.getId()));
         dto.setPhone(user.getPhone());
         dto.setEmail(user.getEmail());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
-        dto.setImage(user.getImage());
+        dto.setImage(String.valueOf(user.getImage()));
         dto.setRole(user.getRole());
         return dto;
     }

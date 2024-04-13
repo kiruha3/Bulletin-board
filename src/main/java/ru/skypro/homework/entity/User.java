@@ -1,10 +1,6 @@
 package ru.skypro.homework.entity;
 
 import lombok.Data;
-<<<<<<< HEAD
-import ru.skypro.homework.dto.Role;
-=======
->>>>>>> origin/dev-kirill
 
 import javax.persistence.*;
 
@@ -19,4 +15,6 @@ public class User {
     private String lastName;
     private String phone;
     private Role role;
+    @OneToOne
+    private Image image;
 }

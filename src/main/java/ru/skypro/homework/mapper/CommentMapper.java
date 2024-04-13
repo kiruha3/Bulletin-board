@@ -17,12 +17,12 @@ public class CommentMapper {
     public CommentDto toDto(Comment comment){
 
         CommentDto commentDto = new CommentDto();
-        commentDto.setPk(comment.getPk());
+        commentDto.setPk(Math.toIntExact(comment.getId()));
         commentDto.setCreatedAt(comment.getCreatedAt());
         commentDto.setText(comment.getText());
-        commentDto.setAuthor(comment.getUser().getId());
+        commentDto.setAuthor(Math.toIntExact(comment.getUser().getId()));
         commentDto.setAuthorFirstName(comment.getUser().getFirstName());
-        commentDto.setAuthorImage(comment.getUser().getImage());
+        commentDto.setAuthorImage(String.valueOf(comment.getImage()));
 
         return commentDto;
     }
