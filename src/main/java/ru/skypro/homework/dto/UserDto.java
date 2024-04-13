@@ -23,5 +23,9 @@ public class UserDto {
     @JsonProperty("phone")
     private String phone;
 
+    @JsonProperty("role")
+    private Role role;
 
+    @JsonProperty("image")
+    private String image;
 }
