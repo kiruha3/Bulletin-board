@@ -8,15 +8,17 @@ import ru.skypro.homework.dto.ad.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
 import java.util.List;
 import java.util.stream.Collectors;
+
+@Deprecated
 @Service
 public class AdMapper {
     public AdDto toAdDto(Ad ad) {
         AdDto adDto = new AdDto();
 
-        adDto.setPk(Math.toIntExact(ad.getId()));
-        adDto.setAuthor(Math.toIntExact(ad.getUser().getId()));
-        adDto.setImage(String.valueOf(ad));//todo fix маппить эндпоинт
-        adDto.setPrice((ad.getPrice()));
+        adDto.setPk(ad.getId());
+        adDto.setAuthor(ad.getUser().getId());
+        adDto.setImage(ad.getImage().getUrl());//todo fix маппить эндпоинт
+        adDto.setPrice(ad.getPrice());
         adDto.setTitle(ad.getTitle());
 
         return adDto;
@@ -34,7 +36,7 @@ public class AdMapper {
         return adsDto;
     }
 
-    public Ad toEntity (CreateOrUpdateAdDto createOrUpdateAdDto) {
+    public Ad toEntity(CreateOrUpdateAdDto createOrUpdateAdDto) {
         Ad ad = new Ad();
 
         ad.setTitle(createOrUpdateAdDto.getTitle());

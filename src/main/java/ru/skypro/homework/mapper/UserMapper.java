@@ -1,33 +1,18 @@
 package ru.skypro.homework.mapper;
 
-import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.RegisterDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.repository.ImageRepository;
 
-@Service
-public class UserMapper {
+@Mapper(componentModel = "spring")
+public abstract class UserMapper {
+    @Autowired
+    private ImageRepository imageRepository;
 
-    public UserDto toDto(User user) {
-        UserDto dto = new UserDto();
-
-        dto.setId(Math.toIntExact(user.getId()));
-        dto.setPhone(user.getPhone());
-        dto.setEmail(user.getEmail());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setImage(String.valueOf(user.getImage()));
-        dto.setRole(user.getRole());
-        return dto;
-    }
-
-    public User toEntity(RegisterDto dto) {
-        User user = new User();
-        user.setEmail(dto.getUsername());
-        user.setPhone(dto.getPhone());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setRole(dto.getRole());
-        return user;
-    }
+    @Mapping(target = "image", expression = "java(user.getImage().getUrl())")
+    abstract UserDto toDto(User user);
+//    abstract User toEntity(UserDto userDto);
 }

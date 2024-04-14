@@ -5,6 +5,7 @@ import ru.skypro.homework.dto.comments.CommentDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Comment;
 
+@Deprecated
 @Service
 public class CommentMapper {
 
