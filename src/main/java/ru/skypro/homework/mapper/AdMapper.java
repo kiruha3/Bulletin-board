@@ -10,15 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class AdMapper {
-
-
-
     public AdDto toAdDto(Ad ad) {
         AdDto adDto = new AdDto();
 
         adDto.setPk(Math.toIntExact(ad.getId()));
         adDto.setAuthor(Math.toIntExact(ad.getUser().getId()));
-        adDto.setImage(String.valueOf(ad));
+        adDto.setImage(String.valueOf(ad));//todo fix маппить эндпоинт
         adDto.setPrice((ad.getPrice()));
         adDto.setTitle(ad.getTitle());
 

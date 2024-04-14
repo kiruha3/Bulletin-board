@@ -1,14 +1,9 @@
 package ru.skypro.homework.entity;
 
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import ru.skypro.homework.dto.comments.CommentDto;
 
 import javax.persistence.*;
 
-@Data
 @Entity
 public class Comment {
     @Id
@@ -27,4 +22,60 @@ public class Comment {
     private Long createdAt;
 
     private String text;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public String getAuthorFirstName() {
+        return authorFirstName;
+    }
+
+    public void setAuthorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
+    }
+
+    public Long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }
