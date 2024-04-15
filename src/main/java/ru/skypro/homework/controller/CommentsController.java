@@ -9,6 +9,7 @@ import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 
 @RestController
 @RequestMapping("/ads")
+@Deprecated
 public class CommentsController {
 
 

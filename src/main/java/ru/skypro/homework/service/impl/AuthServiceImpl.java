@@ -28,6 +28,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean register(RegisterDto registerDto) {
+        ru.skypro.homework.entity.User user = registerMapper.toEntity(registerDto);
+
         if (manager.userExists(registerDto.getUsername())) {
             return false;
         }

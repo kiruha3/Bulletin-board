@@ -10,6 +10,7 @@ import ru.skypro.homework.dto.UserDto;
 
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
+@Deprecated
 public class UsersController {
 
 

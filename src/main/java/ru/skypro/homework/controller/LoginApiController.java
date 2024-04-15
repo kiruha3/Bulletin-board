@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.LoginDto;
+import ru.skypro.homework.service.AuthService;
 
 import javax.annotation.processing.Generated;
 import javax.servlet.http.HttpServletRequest;
@@ -28,15 +29,22 @@ public class LoginApiController {
 
     private final HttpServletRequest request;
 
+    private final AuthService authService;
+
     @Autowired
-    public LoginApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public LoginApiController(ObjectMapper objectMapper, HttpServletRequest request, AuthService authService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.authService = authService;
     }
+
     @PostMapping(value = "/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginDto body) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginDto loginDto) {
+        if (authService.login(loginDto.getUsername(), loginDto.getPassword())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 }

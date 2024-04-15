@@ -16,6 +16,7 @@ import ru.skypro.homework.service.AuthService;
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
+@Deprecated
 public class AuthController {
 
     private final AuthService authService;
