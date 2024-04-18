@@ -39,18 +39,20 @@ public class AdsApiController {
         this.request = request;
     }
 
-    @PostMapping(value = "/ads")
-    public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties, @Valid @RequestPart(value = "image", required = false) MultipartFile image) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
+    // Этот метод позволяет создавать новые объявления, принимая данные о свойствах и изображении, и возвращая результат в соответствии с ожидаемым типом ответа.
+    @PostMapping(value = "/ads") // указывает, что данный метод будет обрабатывать POST запросы по пути "/ads"
+    public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties, // Параметр properties представляет данные для создания или обновления объявления в формате CreateOrUpdateAdDto. Помечен опциональным (required = false).
+                                       @Valid @RequestPart(value = "image", required = false) MultipartFile image) { // Параметр image (изображение) связанное с объявлением. Аннотация @Valid - необходимость проведения валидации параметра. Параметр опциональный.
+        String accept = request.getHeader("Accept"); // Получение заголовка "Accept" из запроса, который определяет тип ожидаемого ответа.
+        if (accept != null && accept.contains("application/json")) { // Проверка типа ожидаемого ответа: если тип JSON (application/json), то:
+            try { // Предоставляется фиктивный объект AdDto в ответе ResponseEntity
                 return new ResponseEntity<AdDto>(objectMapper.readValue("{\n  \"image\" : \"image\",\n  \"author\" : 6,\n  \"price\" : 5,\n  \"pk\" : 1,\n  \"title\" : \"title\"\n}", AdDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+            } catch (IOException e) { // В случае возникновения ошибки при сериализации, логируется ошибка и возвращается HttpStatus.INTERNAL_SERVER_ERROR.
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<AdDto>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-
+        // Если тип ответа не JSON, возвращается HttpStatus.NOT_IMPLEMENTED.
         return new ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 

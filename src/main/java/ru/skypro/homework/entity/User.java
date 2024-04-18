@@ -19,10 +19,12 @@ public class User {
     private String firstName;
     private String lastName;
     private String phone;
-    private Role role;
+
     private String username;
     private String password;
     private boolean enabled;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @OneToOne
     private Image image;
 }

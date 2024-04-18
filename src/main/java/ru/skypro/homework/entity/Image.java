@@ -10,11 +10,19 @@ import javax.persistence.*;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Table(name = "images")
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String url;
+    private Long fileSize;
+    private String mediaType;
+
     @OneToOne
     private User user;
+
+    private byte[] data;
+    @ManyToOne
+    @JoinColumn(name = "ads_id")
+    private Ad ad;
 }

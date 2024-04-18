@@ -1,31 +1,27 @@
 package ru.skypro.homework.mapper;
 
-import org.springframework.stereotype.Service;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import ru.skypro.homework.dto.comments.CommentDto;
-import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
+
 import ru.skypro.homework.entity.Comment;
 
-@Deprecated
-@Service
-public class CommentMapper {
+import java.util.List;
 
-    public Comment toEntity (CreateOrUpdateCommentDto createOrUpdateCommentDto){
-        Comment comment = new Comment();
-        comment.setText(createOrUpdateCommentDto.getText());
-        return comment;
-    }
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface CommentMapper {
 
-    public CommentDto toDto(Comment comment){
+    @Mapping(source = "id", target = "pk")
+    @Mapping(source = "author.id", target = "author")
+    CommentDto commentToCommentDto(Comment comment);
 
-        CommentDto commentDto = new CommentDto();
-        commentDto.setPk(Math.toIntExact(comment.getId()));
-        commentDto.setCreatedAt(comment.getCreatedAt());
-        commentDto.setText(comment.getText());
-        commentDto.setAuthor(Math.toIntExact(comment.getUser().getId()));
-        commentDto.setAuthorFirstName(comment.getUser().getFirstName());
-        commentDto.setAuthorImage(String.valueOf(comment.getImage()));
+    @Mapping(source = "pk", target = "id")
+    @Mapping(source = "author", target = "author.id")
+    Comment commentDtoToComment(CommentDto commentDto);
 
-        return commentDto;
-    }
+    List<Comment> commentToCommentDto(List<Comment> commentList);
 
 }
