@@ -3,8 +3,10 @@ package ru.skypro.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.Authentication;
 
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +16,7 @@ import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
-import ru.skypro.homework.entity.User;
+import ru.skypro.homework.exception.AdNotFoundException;
 
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
@@ -35,7 +37,7 @@ public  class AdServiceImpl implements AdService{
     private final UserService userService;
     private final ImageService imageService;
     private final AdMapper adMapper;
-
+    private final UserDetailsService userDetailsService;
     /**
      * Метод выводит AdsDto (кол-во объявлений и все объявления)
      *
@@ -52,39 +54,57 @@ public  class AdServiceImpl implements AdService{
 
     @Override
     @Transactional // Аннотация @Transactional обеспечивает управление транзакциями в методе. Это означает, что все операции в методе будут выполнены в рамках одной транзакции базы данных. В случае успешного выполнения всех операций транзакция будет закрыта и изменения зафиксированы в базе данных. Если произойдет ошибка, транзакция будет откатана.
-    public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
+    public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image){ // , Authentication authentication) {
 
         log.info("Был вызван метод создания объявлений из {}", AdService.class.getSimpleName());
 
-        User currentUser = userService.getUser(authentication.getName());
+        //User currentUser = userService.getUser(authentication.getName());
 
         Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
-        ads.setAuthor(currentUser);
+        //ads.setAuthor(currentUser);
         Ad savedAds = adRepository.save(ads);
 
         Image adsImage = imageService.createImage(image, savedAds);
-        savedAds.setImage((Image) List.of(adsImage));
+        savedAds.setImage(adsImage);
         return adMapper.adsToAdsDto(savedAds);
     }
 
     @Override
     public ExtendedAdDto getExtendedAdDto(int idPk) {
-        return null;
+        Ad ads = adRepository.findById(idPk);
+        return adMapper.adsToFullAdsDto(ads);
     }
 
     @Override
-    public AdDto updateAd(int idPk, CreateOrUpdateAdDto createOrUpdateAdDto, Authentication authentication) {
-        return null;
+    public AdDto updateAd(int idPk, CreateOrUpdateAdDto createOrUpdateAdDto) {
+
+    Ad oldAds =  adRepository.findById(idPk);
+    Ad infoToUpdate = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
+
+        oldAds.setPrice(infoToUpdate.getPrice());
+        oldAds.setTitle(infoToUpdate.getTitle());
+        oldAds.setDescription(infoToUpdate.getDescription());
+
+    Ad updatedAds = adRepository.save(oldAds);
+        return adMapper.adsToAdsDto(updatedAds);
     }
 
     @Override
     public AdsDto getAdDtoMe(String userName) {
+
+        //User user = (User) userDetailsService.loadUserByUsername(userName);
+//        List<Ad> ads = adRepository.findAllByUser(userName);
+//        AdsDto adsDto = new AdsDto();
+//        adsDto.setCount(ads.size());
+//        adsDto.setResults(adMapper.adToAdsDtoList(ads));
+//        return adsDto;
         return null;
     }
 
     @Override
-    public void deletedAd(int idPk, String userName) {
-
+    public void removeAd(int idPk) { //, String userName) {
+        Ad ads = adRepository.findById(idPk); //orElseThrow(AdNotFoundException::new);
+        adRepository.delete(ads);
     }
 
     @Override

@@ -8,6 +8,7 @@ import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 import java.util.Optional;
+import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 

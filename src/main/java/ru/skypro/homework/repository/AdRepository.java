@@ -12,7 +12,7 @@ import java.util.List;
 public interface AdRepository extends JpaRepository<Ad,Long> {
     @Query("SELECT s from Ad s")
     List<Ad> getAll();
- //   Ad findByPk(int adId);
- //   List<Ad> findAllByUser(User user);
+    Ad findById(int adId);
+    //List<Ad> findAllByUser(String user);
     List<Ad> findAdsByAuthorUsername(String email);
 }

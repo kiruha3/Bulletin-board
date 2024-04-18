@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.AdDto;
@@ -15,6 +18,8 @@ import ru.skypro.homework.dto.ad.ExtendedAdDto;
 import ru.skypro.homework.dto.comments.CommentDto;
 import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
+import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.ImageService;
 
 import javax.annotation.processing.Generated;
 import javax.servlet.http.HttpServletRequest;
@@ -30,12 +35,13 @@ public class AdsApiController {
     private static final Logger log = LoggerFactory.getLogger(AdsApiController.class);
 
     private final ObjectMapper objectMapper;
-
+    private final AdService adService;
+    //private final ImageService imageService;
     private final HttpServletRequest request;
 
-    @Autowired
-    public AdsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public AdsApiController(ObjectMapper objectMapper, AdService adService, HttpServletRequest request) {
         this.objectMapper = objectMapper;
+        this.adService = adService;
         this.request = request;
     }
 
@@ -43,32 +49,16 @@ public class AdsApiController {
     @PostMapping(value = "/ads") // указывает, что данный метод будет обрабатывать POST запросы по пути "/ads"
     public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties, // Параметр properties представляет данные для создания или обновления объявления в формате CreateOrUpdateAdDto. Помечен опциональным (required = false).
                                        @Valid @RequestPart(value = "image", required = false) MultipartFile image) { // Параметр image (изображение) связанное с объявлением. Аннотация @Valid - необходимость проведения валидации параметра. Параметр опциональный.
-        String accept = request.getHeader("Accept"); // Получение заголовка "Accept" из запроса, который определяет тип ожидаемого ответа.
-        if (accept != null && accept.contains("application/json")) { // Проверка типа ожидаемого ответа: если тип JSON (application/json), то:
-            try { // Предоставляется фиктивный объект AdDto в ответе ResponseEntity
-                return new ResponseEntity<AdDto>(objectMapper.readValue("{\n  \"image\" : \"image\",\n  \"author\" : 6,\n  \"price\" : 5,\n  \"pk\" : 1,\n  \"title\" : \"title\"\n}", AdDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) { // В случае возникновения ошибки при сериализации, логируется ошибка и возвращается HttpStatus.INTERNAL_SERVER_ERROR.
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AdDto>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         // Если тип ответа не JSON, возвращается HttpStatus.NOT_IMPLEMENTED.
-        return new ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(adService.creatAd(properties, image), HttpStatus.CREATED); // ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @GetMapping(value = "/ads/{id}")
     public ResponseEntity<ExtendedAdDto> getAds(@PathVariable("id") Integer id) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ExtendedAdDto>(objectMapper.readValue("{\n  \"image\" : \"image\",\n  \"authorLastName\" : \"authorLastName\",\n  \"authorFirstName\" : \"authorFirstName\",\n  \"phone\" : \"phone\",\n  \"price\" : 6,\n  \"description\" : \"description\",\n  \"pk\" : 0,\n  \"title\" : \"title\",\n  \"email\" : \"email\"\n}", ExtendedAdDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ExtendedAdDto>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<ExtendedAdDto>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("Был вызван метод получения полного объявления по id = {}", id);
+        return ResponseEntity.ok(adService.getExtendedAdDto(id));
     }
     @GetMapping(value = "/ads/me")
     public ResponseEntity<AdsDto> getAdsMe() {
@@ -87,38 +77,22 @@ public class AdsApiController {
 
     @GetMapping(value = "/ads")
     public ResponseEntity<AdsDto> getAllAds() {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AdsDto>(objectMapper.readValue("{\n  \"count\" : 0,\n  \"results\" : [ {\n    \"image\" : \"image\",\n    \"author\" : 6,\n    \"price\" : 5,\n    \"pk\" : 1,\n    \"title\" : \"title\"\n  }, {\n    \"image\" : \"image\",\n    \"author\" : 6,\n    \"price\" : 5,\n    \"pk\" : 1,\n    \"title\" : \"title\"\n  } ]\n}", AdsDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AdsDto>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<AdsDto>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(adService.getAllAds(), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/ads/{id}")
     public ResponseEntity<Void> removeAd(@PathVariable("id") Integer id) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        //String accept = request.getHeader("Accept");
+        //return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("Был вызван метод удаления объявления с помощью id = {}", id);
+        adService.removeAd(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping(value = "/ads/{id}")
     public ResponseEntity<AdDto> updateAds(@PathVariable("id") Integer id, @Valid @RequestBody CreateOrUpdateAdDto body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AdDto>(objectMapper.readValue("{\n  \"image\" : \"image\",\n  \"author\" : 6,\n  \"price\" : 5,\n  \"pk\" : 1,\n  \"title\" : \"title\"\n}", AdDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AdDto>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("Was invoked update ad by id = {} method", id);
+        return ResponseEntity.ok(adService.updateAd(id,body));
     }
     @PatchMapping(value = "/ads/{id}/image")
     public ResponseEntity<List<byte[]>> updateImage(@PathVariable("id") Integer id, @Valid @RequestPart(value = "image", required = false) MultipartFile image) {
@@ -148,6 +122,8 @@ public class AdsApiController {
         }
 
         return new ResponseEntity<CommentsDto>(HttpStatus.NOT_IMPLEMENTED);
+
+
     }
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentDto> addComment(@PathVariable("id") Integer id, @Valid @RequestBody CreateOrUpdateCommentDto body) {
@@ -162,6 +138,7 @@ public class AdsApiController {
         }
 
         return new ResponseEntity<CommentDto>(HttpStatus.NOT_IMPLEMENTED);
+
     }
     @PatchMapping("{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CreateOrUpdateCommentDto body) {

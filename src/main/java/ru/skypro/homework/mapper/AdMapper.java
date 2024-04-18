@@ -32,6 +32,10 @@ public interface AdMapper {
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "images", target = "image", qualifiedByName = "getListOfImageLinks")
     public  ExtendedAdDto adsToFullAdsDto(Ad ads);
+
+    @Mapping(target = "author", source = "user.id")
+    List<AdDto> adToAdsDtoList(List<Ad> adList);
+
     public List<AdDto> mapListOfAdsToListDTO(List<Ad> listAds);
     @Named("getListOfImageLinks")
     default List<String> getListOfImageLinks(List<Image> images) {
