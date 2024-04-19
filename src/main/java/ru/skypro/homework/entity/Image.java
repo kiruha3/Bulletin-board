@@ -17,6 +17,7 @@ public class Image {
     private Long id;
     private Long fileSize;
     private String mediaType;
+    private String filePath;
 
     @OneToOne
     private User user;

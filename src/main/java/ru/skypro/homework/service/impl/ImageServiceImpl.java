@@ -32,10 +32,11 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public byte[] getAdImage(Long id) {
-        return getImageFromDB(id).getData();
+        return getImage(id).getData();
     }
 
-    private Image getImageFromDB(long id) {
+    @Override
+    public Image getImage(long id) {
         return imageRepository.findById(id).orElseThrow(ImageNotFoundException::new);
     }
 
