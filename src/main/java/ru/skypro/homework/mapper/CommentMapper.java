@@ -4,24 +4,32 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.comments.CommentDto;
 
 import ru.skypro.homework.entity.Comment;
+import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.repository.UserRepository;
 
 import java.util.List;
 
+@Component
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-public interface CommentMapper {
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        imports = {UserNotFoundException.class})
+public abstract class CommentMapper {
+    @Autowired
+    UserRepository userRepository;
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "author.id", target = "author")
-    CommentDto commentToCommentDto(Comment comment);
+    @Mapping(target = "author", expression = "java(comment.getAuthor().getId())")
+    public abstract CommentDto commentToCommentDto(Comment comment);
 
     @Mapping(source = "pk", target = "id")
-    @Mapping(source = "author", target = "author.id")
-    Comment commentDtoToComment(CommentDto commentDto);
+    @Mapping(target = "author", expression = "java(userRepository.findById(commentDto.getAuthor()).orElseThrow(() -> new UserNotFoundException(\"Пользователь не найден\")))")
+    public abstract Comment commentDtoToComment(CommentDto commentDto);
 
-    List<Comment> commentToCommentDto(List<Comment> commentList);
+    public abstract List<Comment> commentToCommentDto(List<Comment> commentList);
 
 }
