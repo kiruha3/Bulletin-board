@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Ad;
-import ru.skypro.homework.entity.User;
+//import ru.skypro.homework.entity.User;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.AdService;
