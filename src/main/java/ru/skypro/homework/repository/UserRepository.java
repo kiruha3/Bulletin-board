@@ -6,10 +6,11 @@ import org.springframework.stereotype.Repository;
 import ru.skypro.homework.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT s from Ad s")
     List<User> getAll();
-    User findUserByUsername(String username);
+    Optional<User> findByUsername(String username);
 }

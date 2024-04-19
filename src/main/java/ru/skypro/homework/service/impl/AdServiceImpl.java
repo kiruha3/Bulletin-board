@@ -29,8 +29,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public  class AdServiceImpl implements AdService{
-
+public  class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final UserService userService;
     private final ImageService imageService;
@@ -52,11 +51,13 @@ public  class AdServiceImpl implements AdService{
 
     @Override
     @Transactional // Аннотация @Transactional обеспечивает управление транзакциями в методе. Это означает, что все операции в методе будут выполнены в рамках одной транзакции базы данных. В случае успешного выполнения всех операций транзакция будет закрыта и изменения зафиксированы в базе данных. Если произойдет ошибка, транзакция будет откатана.
-    public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image) {
+    public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
 
         log.info("Был вызван метод создания объявлений из {}", AdService.class.getSimpleName());
-
+        User user = userService.getUser(authentication.getName());
         Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
+
+        ads.setAuthor(user);
 
         Ad savedAds = adRepository.save(ads);
 

@@ -20,7 +20,7 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User author;
     @OneToOne
-    private Image image;// authorImage;
+    private Image authorImage;
     private String authorFirstName;
     private Long createdAt;  // TODO нужно LocalDateTime
     private String text;

@@ -11,7 +11,7 @@ import ru.skypro.homework.dto.ad.ExtendedAdDto;
 public interface AdService {
     AdsDto getAllAds();
 
-    AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image);
+    AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication);
 
     ExtendedAdDto getExtendedAdDto(Integer id);
 

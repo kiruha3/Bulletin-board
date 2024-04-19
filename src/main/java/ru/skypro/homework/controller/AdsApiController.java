@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.AdDto;
@@ -28,7 +29,6 @@ import java.util.List;
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 public class AdsApiController {
-
     private static final Logger log = LoggerFactory.getLogger(AdsApiController.class);
 
     private final ObjectMapper objectMapper;
@@ -47,8 +47,9 @@ public class AdsApiController {
     // Этот метод позволяет создавать новые объявления, принимая данные о свойствах и изображении, и возвращая результат в соответствии с ожидаемым типом ответа.
     @PostMapping(value = "/ads") // указывает, что данный метод будет обрабатывать POST запросы по пути "/ads"
     public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties, // Параметр properties представляет данные для создания или обновления объявления в формате CreateOrUpdateAdDto. Помечен опциональным (required = false).
-                                       @Valid @RequestPart(value = "image", required = false) MultipartFile image) { // Параметр image (изображение) связанное с объявлением. Аннотация @Valid - необходимость проведения валидации параметра. Параметр опциональный.
-        return new ResponseEntity<>(adService.creatAd(properties, image), HttpStatus.CREATED); // ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
+                                       @Valid @RequestPart(value = "image", required = false) MultipartFile image,
+                                       Authentication authentication) { // Параметр image (изображение) связанное с объявлением. Аннотация @Valid - необходимость проведения валидации параметра. Параметр опциональный.
+        return new ResponseEntity<>(adService.creatAd(properties, image, authentication), HttpStatus.CREATED); // ResponseEntity<AdDto>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @GetMapping(value = "/ads/{id}")
@@ -104,7 +105,7 @@ public class AdsApiController {
         return new ResponseEntity<List<byte[]>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/{id}/comments")
+    @GetMapping("/ads/{id}/comments")
     public ResponseEntity<CommentsDto> getComments(@PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -118,19 +119,20 @@ public class AdsApiController {
 
         return new ResponseEntity<CommentsDto>(HttpStatus.NOT_IMPLEMENTED);
     }
-    @PostMapping("/{id}/comments")
-    public ResponseEntity<CommentDto> addComment(@PathVariable("id") Integer id, @Valid @RequestBody CommentDto body) { //TODO разобраться с подменой тела на CreateOrUpdateCommentDto body
+    @PostMapping("/ads/{id}/comments")
+    public ResponseEntity<CommentDto> addComment(@PathVariable("id") Integer id, @Valid @RequestBody CreateOrUpdateCommentDto body, Authentication authentication) {
         log.info("Был вызван запрос на добавление комментария для объявления = {} ", id);
-        CommentDto newComment = commentService.createNewComment(id, body);
+        CommentDto newComment = commentService.createNewComment(id, body, authentication);
         return ResponseEntity.ok(newComment);
     }
-    @PatchMapping("{adId}/comments/{commentId}")
+
+    @PatchMapping("/ads/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CommentDto body) { //TODO разобраться с подменой тела CreateOrUpdateCommentDto body)
         log.info("Было вызвано  обновление объявление = {} в комментарии id = {}", adId, commentId);
         return ResponseEntity.ok(commentService.updateComments(adId, commentId, body));
     }
 
-    @DeleteMapping("/{adId}/comments/{commentId}")
+    @DeleteMapping("/ads/{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId) {
         log.info("Was invoked delete ad's comment by id = {} method", commentId);
         commentService.deleteComments(adId, commentId);

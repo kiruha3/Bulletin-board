@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.comments.CommentDto;
 
+import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Comment;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
@@ -24,11 +25,16 @@ public abstract class CommentMapper {
 
     @Mapping(source = "id", target = "pk")
     @Mapping(target = "author", expression = "java(comment.getAuthor().getId())")
+    @Mapping(target = "authorImage", expression = "java(comment.getAuthorImage().getPath())")
     public abstract CommentDto commentToCommentDto(Comment comment);
 
     @Mapping(source = "pk", target = "id")
-    @Mapping(target = "author", expression = "java(userRepository.findById(commentDto.getAuthor()).orElseThrow(() -> new UserNotFoundException(\"Пользователь не найден\")))")
+    @Mapping(target = "author", expression = "java(userRepository.findById(commentDto.getAuthor()).orElseThrow(UserNotFoundException::new))")
+    @Mapping(target = "authorImage", expression = "java(comment.getAuthorImage().getPath())")
     public abstract Comment commentDtoToComment(CommentDto commentDto);
+
+    @Mapping(source = "text", target = "text")
+    public abstract Comment createOrUpdateCommmentDtoToComment(CreateOrUpdateCommentDto createOrUpdateCommentDto);
 
     public abstract List<Comment> commentToCommentDto(List<Comment> commentList);
 
