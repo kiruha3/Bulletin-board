@@ -16,6 +16,7 @@ import ru.skypro.homework.dto.comments.CommentDto;
 import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.CommentService;
 
 import javax.annotation.processing.Generated;
 import javax.servlet.http.HttpServletRequest;
@@ -32,12 +33,14 @@ public class AdsApiController {
 
     private final ObjectMapper objectMapper;
     private final AdService adService;
+    private final CommentService commentService;
     private final HttpServletRequest request;
 
     @Autowired
-    public AdsApiController(ObjectMapper objectMapper, AdService adService, HttpServletRequest request) {
+    public AdsApiController(ObjectMapper objectMapper, AdService adService, CommentService commentService, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.adService = adService;
+        this.commentService = commentService;
         this.request = request;
     }
 
@@ -116,37 +119,21 @@ public class AdsApiController {
         return new ResponseEntity<CommentsDto>(HttpStatus.NOT_IMPLEMENTED);
     }
     @PostMapping("/{id}/comments")
-    public ResponseEntity<CommentDto> addComment(@PathVariable("id") Integer id, @Valid @RequestBody CreateOrUpdateCommentDto body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<CommentDto>(objectMapper.readValue("{\n  \"createdAt\" : 1,\n  \"authorFirstName\" : \"authorFirstName\",\n  \"author\" : 6,\n  \"authorImage\" : \"authorImage\",\n  \"pk\" : 5,\n  \"text\" : \"text\"\n}", CommentDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<CommentDto>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<CommentDto>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<CommentDto> addComment(@PathVariable("id") Integer id, @Valid @RequestBody CommentDto body) { //TODO разобраться с подменой тела на CreateOrUpdateCommentDto body
+        log.info("Был вызван запрос на добавление комментария для объявления = {} ", id);
+        CommentDto newComment = commentService.createNewComment(id, body);
+        return ResponseEntity.ok(newComment);
     }
     @PatchMapping("{adId}/comments/{commentId}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CreateOrUpdateCommentDto body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<CommentDto>(objectMapper.readValue("{\n  \"createdAt\" : 1,\n  \"authorFirstName\" : \"authorFirstName\",\n  \"author\" : 6,\n  \"authorImage\" : \"authorImage\",\n  \"pk\" : 5,\n  \"text\" : \"text\"\n}", CommentDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<CommentDto>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<CommentDto>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<CommentDto> updateComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CommentDto body) { //TODO разобраться с подменой тела CreateOrUpdateCommentDto body)
+        log.info("Было вызвано  обновление объявление = {} в комментарии id = {}", adId, commentId);
+        return ResponseEntity.ok(commentService.updateComments(adId, commentId, body));
     }
 
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("Was invoked delete ad's comment by id = {} method", commentId);
+        commentService.deleteComments(adId, commentId);
+        return ResponseEntity.ok().build();
     }
 }

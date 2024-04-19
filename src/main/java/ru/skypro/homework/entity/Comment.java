@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     //private Integer count;
     @ManyToOne
     @JoinColumn(name = "user_id")
