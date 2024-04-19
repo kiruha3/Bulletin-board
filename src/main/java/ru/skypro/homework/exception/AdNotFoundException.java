@@ -1,14 +1,32 @@
 package ru.skypro.homework.exception;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@RequiredArgsConstructor
+@ResponseStatus(HttpStatus.NOT_FOUND)
+
 public class AdNotFoundException extends RuntimeException {
-
-    private final int id;
-
-    @Override
-    public String getMessage() {
-        return "Объявление с таким id: " + id + " не найдено";
+    public AdNotFoundException() {
+        super();
     }
+
+    public AdNotFoundException(String message) {
+        super(message);
+    }
+
+    public AdNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public AdNotFoundException(Throwable cause) {
+        super(cause);
+    }
+
+    protected AdNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+    //private final int id;
+    //@Override
+    //public String getMessage() {
+    //  return "Объявление с таким id: " + id + " не найдено";}
 }

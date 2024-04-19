@@ -9,7 +9,7 @@ import ru.skypro.homework.entity.User;
 import java.util.List;
 
 @Repository
-public interface AdRepository extends JpaRepository<Ad,Long> {
+public interface AdRepository extends JpaRepository<Ad,Integer> {
     @Query("SELECT s from Ad s")
     List<Ad> getAll();
  //   Ad findByPk(int adId);
