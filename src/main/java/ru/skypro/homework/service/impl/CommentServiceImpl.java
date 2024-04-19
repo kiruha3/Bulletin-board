@@ -37,11 +37,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto createNewComment(Integer adsId, CreateOrUpdateCommentDto commentDto, Authentication authentication) {
         log.info("Был вызван метод создания нового комментария", CommentService.class.getSimpleName());
-        User user = userService.getUser(authentication.getName());
+        //User user = userService.getUser(authentication.getName());
         Ad adsById = adService.getAdsById(adsId);
         Comment comment = commentMapper.createOrUpdateCommmentDtoToComment(commentDto);
-        comment.setAuthor(user);
-        comment.setAuthorFirstName(user.getFirstName());
+        //comment.setAuthor(user);
+        //comment.setAuthorFirstName(user.getFirstName());
         comment.setCreatedAt(Instant.now().toEpochMilli());
         comment.setAd(adsById);
         Comment savedComment = commentRepository.save(comment);

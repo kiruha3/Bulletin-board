@@ -54,10 +54,10 @@ public  class AdServiceImpl implements AdService {
     public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
 
         log.info("Был вызван метод создания объявлений из {}", AdService.class.getSimpleName());
-        User user = userService.getUser(authentication.getName());
+        //User user = userService.getUser(authentication.getName());
         Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
 
-        ads.setAuthor(user);
+        //ads.setAuthor(user);
 
         Ad savedAds = adRepository.save(ads);
 
