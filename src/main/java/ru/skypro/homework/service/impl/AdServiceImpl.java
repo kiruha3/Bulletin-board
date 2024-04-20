@@ -16,6 +16,7 @@ import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.exception.AdNotFoundException;
+import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdService;
@@ -23,7 +24,7 @@ import ru.skypro.homework.service.UserService;
 import ru.skypro.homework.service.ImageService;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.util.ArrayList;
 
 
 @Slf4j
@@ -42,17 +43,12 @@ public  class AdServiceImpl implements AdService {
      */
     @Override
     public AdsDto getAllAds() {
-        List<Ad> adList = adRepository.findAll();
-        AdsDto adsDto = new AdsDto();
-        adsDto.setCount(adList.size());
-        adsDto.setResults(adMapper.mapListOfAdsToListDTO(adList));
-        return adsDto;
+        return adMapper.getAds(adRepository.findAll());
     }
 
     @Override
     @Transactional // Аннотация @Transactional обеспечивает управление транзакциями в методе. Это означает, что все операции в методе будут выполнены в рамках одной транзакции базы данных. В случае успешного выполнения всех операций транзакция будет закрыта и изменения зафиксированы в базе данных. Если произойдет ошибка, транзакция будет откатана.
     public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
-
         log.info("Был вызван метод создания объявлений из {}", AdService.class.getSimpleName());
         User user = userService.getUser(authentication.getName());
         Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
@@ -61,20 +57,21 @@ public  class AdServiceImpl implements AdService {
 
         Ad savedAds = adRepository.save(ads);
 
-        Image adsImage = imageService.createImage(image, savedAds);
+        Image adsImage = imageService.addImage(image);
+
         savedAds.setImage(adsImage);
-        return adMapper.adsToAdsDto(savedAds);
+
+        return adMapper.adToAdDto(savedAds);
     }
 
     @Override
     public ExtendedAdDto getExtendedAdDto(Integer idPk) {
-        Ad ads = getAdsById(idPk);
-        return adMapper.adsToFullAdsDto(ads);
+        return adMapper.adToExtendedAdDto(getAdById(idPk));
     }
 
     @Override
     public AdDto updateAd(Integer idPk, CreateOrUpdateAdDto createOrUpdateAdDto) {
-        Ad oldAds = getAdsById(idPk);
+        Ad oldAds = getAdById(idPk);
         Ad infoToUpdate = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
 
         oldAds.setPrice(infoToUpdate.getPrice());
@@ -82,34 +79,42 @@ public  class AdServiceImpl implements AdService {
         oldAds.setDescription(infoToUpdate.getDescription());
 
         Ad updatedAds = adRepository.save(oldAds);
-        return adMapper.adsToAdsDto(updatedAds);
+        return adMapper.adToAdDto(updatedAds);
     }
 
     @Override
-    public AdsDto getAdDtoMe(String userName) {
-        return null;
+    public AdsDto getAdsDtoMe(String userName) {
+        return adMapper.getAds(adRepository.findByAuthorId(userService.getUser(userName).getId()).orElse(new ArrayList<>()));
     }
 
     @Override
     public void deletedAd(Integer idPk) {
-        Ad ads = getAdsById(idPk);
-        adRepository.delete(ads);
+        adRepository.delete(getAdById(idPk));
     }
 
     @Override
-    public void uploadImage(int id, MultipartFile image) {
+    public byte[] updateImage(int id, MultipartFile image) {
+        Ad ad = getAdById(id);
+        ad.setImage(imageService.addImage(image));
 
+        adRepository.save(ad);
+
+        return getAdImage(id);
     }
 
-
     @Override
-    public byte[] getAdImage(String filename) {
-        return new byte[0];
+    public byte[] getAdImage(int id) {
+        Ad ad = adRepository.findById(id).orElseThrow(AdNotFoundException::new);
+
+        if (ad.getImage() == null) {
+            throw new ImageNotFoundException();
+        }
+
+        return imageService.getImageData(ad.getImage().getId());
     }
 
     @Override
-    public Ad getAdsById(Integer id) {
+    public Ad getAdById(Integer id) {
         return adRepository.findById(id).orElseThrow(AdNotFoundException::new);
     }
-
 }

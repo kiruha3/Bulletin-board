@@ -2,40 +2,49 @@ package ru.skypro.homework.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.ad.AdDto;
+import ru.skypro.homework.dto.ad.AdsDto;
 import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
-import ru.skypro.homework.entity.Image;
+import ru.skypro.homework.service.impl.ImageServiceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Component
 @Mapper(componentModel = "spring")
-public interface AdMapper {
+public abstract class AdMapper {
+    @Autowired
+    ImageServiceImpl imageService;
+    public abstract Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);
 
+    @Mapping(target = "author", expression = "java(ad.getAuthor().getId())")
+    @Mapping(target = "image", expression = "java(imageService.getAdImageUrl(ad.getId()))")
+    @Mapping(target = "pk", source = "id")
+    public abstract AdDto adToAdDto(Ad ad);
 
     @Mapping(target = "pk", source = "id")
-    @Mapping(target = "author", source = "author.id")
-    //@Mapping(target = "price", source = "price")
-    //@Mapping(target = "title", source = "title")
-    @Mapping(target = "image", source = "images", qualifiedByName = "getListOfImageLinks")
-    public  AdDto adsToAdsDto(Ad ad);
+    @Mapping(target = "image", expression = "java(imageService.getAdImageUrl(ad.getId()))")
+    @Mapping(target = "email", expression = "java(ad.getAuthor().getUsername())")
+    @Mapping(target = "authorFirstName", expression = "java(ad.getAuthor().getFirstName())")
+    @Mapping(target = "authorLastName", expression = "java(ad.getAuthor().getLastName())")
+    @Mapping(target = "phone", expression = "java(ad.getAuthor().getPhone())")
+    public abstract ExtendedAdDto adToExtendedAdDto(Ad ad);
 
-    public  Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);
-    @Mapping(source = "author.firstName", target = "authorFirstName")
-    @Mapping(source = "author.lastName", target = "authorLastName")
-    @Mapping(source = "author.username", target = "email")
-    @Mapping(source = "author.phone", target = "phone")
-    @Mapping(source = "id", target = "pk")
-    @Mapping(source = "images", target = "image", qualifiedByName = "getListOfImageLinks")
-    public  ExtendedAdDto adsToFullAdsDto(Ad ads);
-    public List<AdDto> mapListOfAdsToListDTO(List<Ad> listAds);
-    @Named("getListOfImageLinks")
-    default List<String> getListOfImageLinks(List<Image> images) {
-        return (images == null || images.isEmpty()) ? null :
-                images.stream().map(i -> "/image/" + i.getId()).collect(Collectors.toList());
+    public AdsDto getAds(List<Ad> ads) {
+        AdsDto adsDto = new AdsDto();
+
+        adsDto.setCount(ads.size());
+
+        ArrayList<AdDto> adDtoResult = new ArrayList<>();
+        for (Ad ad : ads) {
+            adDtoResult.add(adToAdDto(ad));
+        }
+        adsDto.setResults(adDtoResult);
+
+        return adsDto;
     }
 }

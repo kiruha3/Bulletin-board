@@ -6,7 +6,7 @@ import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 
 public interface CommentService {
-    CommentsDto getAllCommentsForAdsWithId(Long adsId);
+    CommentsDto getAllCommentsForAd(Integer adId);
 
     CommentDto createNewComment(Integer adId, CreateOrUpdateCommentDto commentDto, Authentication authentication);
 

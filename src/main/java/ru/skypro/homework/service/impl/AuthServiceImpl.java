@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.RegisterDto;
+import ru.skypro.homework.dto.user.RegisterDto;
 import ru.skypro.homework.mapper.RegisterMapper;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.AuthoritiesService;
@@ -25,17 +25,18 @@ public class AuthServiceImpl implements AuthService {
         if (!manager.userExists(userName)) {
             return false;
         }
+
         UserDetails userDetails = manager.loadUserByUsername(userName);
         return encoder.matches(password, userDetails.getPassword());
     }
 
     @Override
     public boolean register(RegisterDto registerDto) {
-        ru.skypro.homework.entity.User user = registerMapper.toEntity(registerDto);
-
         if (manager.userExists(registerDto.getUsername())) {
             return false;
         }
+
+        ru.skypro.homework.entity.User user = registerMapper.toEntity(registerDto);
 
         user.setPassword(encoder.encode(user.getPassword()));
 

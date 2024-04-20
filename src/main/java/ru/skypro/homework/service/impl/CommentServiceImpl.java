@@ -30,15 +30,15 @@ public class CommentServiceImpl implements CommentService {
     private final UserService userService;
 
     @Override
-    public CommentsDto getAllCommentsForAdsWithId(Long adsId) {
-        return null;
+    public CommentsDto getAllCommentsForAd(Integer adId) {
+        return commentMapper.commentsToCommentsDto(commentRepository.findAllByAdId(adId));
     }
 
     @Override
     public CommentDto createNewComment(Integer adsId, CreateOrUpdateCommentDto commentDto, Authentication authentication) {
         log.info("Был вызван метод создания нового комментария", CommentService.class.getSimpleName());
         User user = userService.getUser(authentication.getName());
-        Ad adsById = adService.getAdsById(adsId);
+        Ad adsById = adService.getAdById(adsId);
         Comment comment = commentMapper.createOrUpdateCommmentDtoToComment(commentDto);
         comment.setAuthor(user);
         comment.setAuthorFirstName(user.getFirstName());
@@ -48,6 +48,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToCommentDto(savedComment);
     }
 
+    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public CommentDto getComments(Integer adPk, Integer id) {
         Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
@@ -55,6 +56,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToCommentDto(comment);
     }
 
+    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public void deleteComments(Integer adPk, Integer id) {
         Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
@@ -63,6 +65,7 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public CommentDto updateComments(Integer adPk, Integer id, CommentDto commentDto) {
         Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
@@ -71,5 +74,4 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
         return commentMapper.commentToCommentDto(comment);
     }
-
 }

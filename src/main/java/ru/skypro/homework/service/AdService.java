@@ -17,14 +17,14 @@ public interface AdService {
 
     AdDto updateAd(Integer id, CreateOrUpdateAdDto createOrUpdateAdDto);
 
-    AdsDto getAdDtoMe(String userName);
+    AdsDto getAdsDtoMe(String username);
 
     void deletedAd(Integer idPk);
 
-    void uploadImage(int id, MultipartFile image);
+    byte[] getAdImage(int id);
 
-    byte[] getAdImage(String filename);
+    Ad getAdById(Integer id);
 
-    Ad getAdsById(Integer id);
+    byte[] updateImage(int id, MultipartFile image);
 
 }
