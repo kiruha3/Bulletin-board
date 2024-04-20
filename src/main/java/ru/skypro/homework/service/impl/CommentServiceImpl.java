@@ -62,7 +62,6 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
                 .orElseThrow(CommentNotFoundException::new);
         commentRepository.delete(comment);
-
     }
 
     //TODO: Проверить на работоспособность и переписать. Достаточно commentId
