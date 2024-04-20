@@ -9,6 +9,4 @@ import java.util.List;
 public interface ImageRepository extends JpaRepository<Image,Long> {
     @Query("SELECT s from Ad s")
     List<Image> getAll();
-
-    Image getImageByUrl(String url);
 }

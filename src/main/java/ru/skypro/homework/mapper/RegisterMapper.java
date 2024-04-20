@@ -16,7 +16,7 @@ public abstract class RegisterMapper {
     @Mapping(target = "firstName", source = "firstName")
     @Mapping(target = "lastName", source = "lastName")
     @Mapping(target = "phone", source = "phone")
-    @Mapping(target = "role", source = "role")
+    //@Mapping(target = "role", source = "role")
     @Mapping(target = "password", source = "password")
     public abstract User toEntity(RegisterDto userDto);
 }

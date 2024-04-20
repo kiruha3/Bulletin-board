@@ -1,65 +1,41 @@
 package ru.skypro.homework.mapper;
 
-import org.springframework.stereotype.Service;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import org.mapstruct.Named;
 import ru.skypro.homework.dto.ad.AdDto;
-import ru.skypro.homework.dto.ad.AdsDto;
 import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
+import ru.skypro.homework.entity.Image;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Deprecated
-@Service
-public class AdMapper {
-    public AdDto toAdDto(Ad ad) {
-        AdDto adDto = new AdDto();
+@Mapper(componentModel = "spring")
+public interface AdMapper {
 
-        adDto.setPk(ad.getId());
-        adDto.setAuthor(ad.getUser().getId());
-        adDto.setImage(ad.getImage().getUrl());//todo fix маппить эндпоинт
-        adDto.setPrice(ad.getPrice());
-        adDto.setTitle(ad.getTitle());
 
-        return adDto;
-    }
+    @Mapping(target = "pk", source = "id")
+    @Mapping(target = "author", source = "author.id")
+    //@Mapping(target = "price", source = "price")
+    //@Mapping(target = "title", source = "title")
+    @Mapping(target = "image", source = "images", qualifiedByName = "getListOfImageLinks")
+    public  AdDto adsToAdsDto(Ad ad);
 
-    public AdsDto toAdsDto(List<Ad> ads) {
-        AdsDto adsDto = new AdsDto();
-        List<AdDto> adDtoList = ads.stream()
-                .map(this::toAdDto)
-                .collect(Collectors.toList());
-
-        adsDto.setCount(adDtoList.size());
-        adsDto.setResults(adDtoList);
-
-        return adsDto;
-    }
-
-    public Ad toEntity(CreateOrUpdateAdDto createOrUpdateAdDto) {
-        Ad ad = new Ad();
-
-        ad.setTitle(createOrUpdateAdDto.getTitle());
-        ad.setDescription(createOrUpdateAdDto.getDescription());
-        ad.setPrice(createOrUpdateAdDto.getPrice());
-
-        return ad;
-
-    }
-
-    public ExtendedAdDto toExtendedAdDto(Ad ad) {
-        ExtendedAdDto extendedAdDto = new ExtendedAdDto();
-
-        extendedAdDto.setPk(Math.toIntExact(ad.getId()));
-        extendedAdDto.setAuthorFirstName(ad.getUser().getFirstName());
-        extendedAdDto.setAuthorLastName(ad.getUser().getLastName());
-        extendedAdDto.setDescription(ad.getDescription());
-        extendedAdDto.setEmail(ad.getUser().getEmail());
-        extendedAdDto.setImage("/" + ad.getImage() + "/image");
-        extendedAdDto.setPhone(ad.getUser().getPhone());
-        extendedAdDto.setPrice(ad.getPrice());
-        extendedAdDto.setTitle(ad.getTitle());
-
-        return extendedAdDto;
+    public  Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);
+    @Mapping(source = "author.firstName", target = "authorFirstName")
+    @Mapping(source = "author.lastName", target = "authorLastName")
+    @Mapping(source = "author.username", target = "email")
+    @Mapping(source = "author.phone", target = "phone")
+    @Mapping(source = "id", target = "pk")
+    @Mapping(source = "images", target = "image", qualifiedByName = "getListOfImageLinks")
+    public  ExtendedAdDto adsToFullAdsDto(Ad ads);
+    public List<AdDto> mapListOfAdsToListDTO(List<Ad> listAds);
+    @Named("getListOfImageLinks")
+    default List<String> getListOfImageLinks(List<Image> images) {
+        return (images == null || images.isEmpty()) ? null :
+                images.stream().map(i -> "/image/" + i.getId()).collect(Collectors.toList());
     }
 }
