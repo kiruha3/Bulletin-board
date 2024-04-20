@@ -1,7 +1,9 @@
 package ru.skypro.homework.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import ru.skypro.homework.entity.Role;
 
 @Data
 public class UserDto {
@@ -23,5 +25,9 @@ public class UserDto {
     @JsonProperty("phone")
     private String phone;
 
+    @JsonProperty("role")
+    private Role role;
 
+    @JsonProperty("image")
+    private String image;
 }

@@ -11,10 +11,10 @@ public class LoginDto {
      * Login
      */
 
-    @JsonProperty("password")
-    @Size(min=8,max=16)
+    @JsonProperty("username")
     private String username;
 
-    @JsonProperty("username")
+    @JsonProperty("password")
+    @Size(min=8,max=16)
     private String password;
 }
