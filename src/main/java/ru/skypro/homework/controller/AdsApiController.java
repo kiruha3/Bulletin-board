@@ -109,14 +109,14 @@ public class AdsApiController {
     @PatchMapping("/ads/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CommentDto body) { //TODO разобраться с подменой тела CreateOrUpdateCommentDto body)
         log.info("Было вызвано  обновление объявление = {} в комментарии id = {}", adId, commentId);
-        return ResponseEntity.ok(commentService.updateComments(adId, commentId, body));
+        return ResponseEntity.ok(commentService.updateComments( commentId, body));
     }
 
     @PreAuthorize("@userSecurity.isCommentAuthor(#id) or hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId) {
         log.info("Was invoked delete ad's comment by id = {} method", commentId);
-        commentService.deleteComments(adId, commentId);
+        commentService.deleteComments( commentId);
         return ResponseEntity.ok().build();
     }
 }

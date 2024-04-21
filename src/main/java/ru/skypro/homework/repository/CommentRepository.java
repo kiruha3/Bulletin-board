@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment,Integer> {
-    Optional<Comment> findCommentByIdAndAuthorId (Integer commentId, Integer authorId);
+    Optional<Comment> findCommentById(Integer commentId);
 
     List<Comment> findAllByAdId(Integer adId);
 }

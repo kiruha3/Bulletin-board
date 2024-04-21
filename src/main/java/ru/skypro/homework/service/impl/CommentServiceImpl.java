@@ -50,24 +50,24 @@ public class CommentServiceImpl implements CommentService {
 
     //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
-    public CommentDto getComments(Integer adPk, Integer id) {
-        Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
+    public CommentDto getComments(Integer commentId) {
+        Comment comment = commentRepository.findCommentById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
         return commentMapper.commentToCommentDto(comment);
     }
 
     //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
-    public void deleteComments(Integer adPk, Integer id) {
-        Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
+    public void deleteComments( Integer commentId) {
+        Comment comment = commentRepository.findCommentById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
         commentRepository.delete(comment);
     }
 
     //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
-    public CommentDto updateComments(Integer adPk, Integer id, CommentDto commentDto) {
-        Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
+    public CommentDto updateComments(Integer commentId, CommentDto commentDto) {
+        Comment comment = commentRepository.findCommentById( commentId)
                 .orElseThrow(CommentNotFoundException::new);
         comment.setText(comment.getText());
         commentRepository.save(comment);
