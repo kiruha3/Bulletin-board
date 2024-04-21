@@ -48,7 +48,6 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToCommentDto(savedComment);
     }
 
-    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public CommentDto getComments(Integer commentId) {
         Comment comment = commentRepository.findCommentById(commentId)
@@ -56,7 +55,6 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToCommentDto(comment);
     }
 
-    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public void deleteComments( Integer commentId) {
         Comment comment = commentRepository.findCommentById(commentId)
@@ -64,13 +62,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
     }
 
-    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
-    public CommentDto updateComments(Integer commentId, CommentDto commentDto) {
-        Comment comment = commentRepository.findCommentById( commentId)
+    public CommentDto updateComments(Integer commentId, CreateOrUpdateCommentDto createOrUpdateCommentDto) {
+        Comment comment = commentRepository.findCommentById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
-        comment.setText(comment.getText());
-        commentRepository.save(comment);
-        return commentMapper.commentToCommentDto(comment);
+        Comment infoToUpdate = commentMapper.createOrUpdateCommmentDtoToComment(createOrUpdateCommentDto);
+
+        comment.setText(infoToUpdate.getText());
+        comment.setCreatedAt(Instant.now().toEpochMilli());
+
+        return commentMapper.commentToCommentDto(commentRepository.save(comment));
     }
 }

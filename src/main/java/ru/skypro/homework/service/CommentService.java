@@ -14,5 +14,7 @@ public interface CommentService {
 
     void deleteComments( Integer commentId);
 
-    CommentDto updateComments(Integer commentId, CommentDto commentDto);
+    CommentDto updateComments(Integer commentId, CreateOrUpdateCommentDto createOrUpdateCommentDto);
+
+
 }

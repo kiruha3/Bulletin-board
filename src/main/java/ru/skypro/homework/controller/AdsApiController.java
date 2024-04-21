@@ -105,16 +105,16 @@ public class AdsApiController {
         return ResponseEntity.ok(commentService.createNewComment(id, body, authentication));
     }
 
-    @PreAuthorize("@userSecurity.isCommentAuthor(#id) or hasAuthority('ROLE_ADMIN')")
-    @PatchMapping("/ads/{adId}/comments/{commentId}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CommentDto body) { //TODO разобраться с подменой тела CreateOrUpdateCommentDto body)
-        log.info("Было вызвано  обновление объявление = {} в комментарии id = {}", adId, commentId);
+    @PreAuthorize("@userSecurity.isCommentAuthor(#commentId) or hasAuthority('ROLE_ADMIN')")
+    @PatchMapping("/ads/{id}/comments/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable("id") Integer id, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CreateOrUpdateCommentDto body) {
+        log.info("Было вызвано  обновление объявление = {} в комментарии id = {}", id, commentId);
         return ResponseEntity.ok(commentService.updateComments( commentId, body));
     }
 
-    @PreAuthorize("@userSecurity.isCommentAuthor(#id) or hasAuthority('ROLE_ADMIN')")
-    @DeleteMapping("/ads/{adId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId) {
+    @PreAuthorize("@userSecurity.isCommentAuthor(#commentId) or hasAuthority('ROLE_ADMIN')")
+    @DeleteMapping("/ads/{id}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Integer adId, @PathVariable("commentId") Integer commentId) {
         log.info("Was invoked delete ad's comment by id = {} method", commentId);
         commentService.deleteComments( commentId);
         return ResponseEntity.ok().build();

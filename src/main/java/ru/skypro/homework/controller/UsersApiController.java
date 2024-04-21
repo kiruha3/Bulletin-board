@@ -44,25 +44,13 @@ public class UsersApiController {
 
     //TODO: Реализовать
     @PostMapping(value = "/users/set_password")
-    public ResponseEntity<Void> setPassword(@Valid @RequestBody NewPasswordDto body) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<?> setPassword(@Valid @RequestBody NewPasswordDto body, Authentication authentication) {
+        userService.updateNewPassword(body, authentication);
+        return ResponseEntity.ok().build();
     }
-
-    //TODO: Реализовать
     @PatchMapping(value = "/users/me")
-    public ResponseEntity<UpdateUserDto> UpdateUserDto(@Valid @RequestBody UpdateUserDto body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UpdateUserDto>(objectMapper.readValue("{\n  \"firstName\" : \"firstName\",\n  \"lastName\" : \"lastName\",\n  \"phone\" : \"phone\"\n}", UpdateUserDto.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UpdateUserDto>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<UpdateUserDto>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<UpdateUserDto> UpdateUserDto(@Valid @RequestBody UpdateUserDto body, Authentication authentication) {
+        return ResponseEntity.ok(userService.updateUser(body, authentication));
     }
 
     //TODO: Реализовать

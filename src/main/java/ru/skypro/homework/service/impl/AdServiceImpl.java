@@ -14,7 +14,7 @@ import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
-//import ru.skypro.homework.entity.User;
+import ru.skypro.homework.entity.User;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
@@ -50,10 +50,10 @@ public  class AdServiceImpl implements AdService {
     @Transactional // Аннотация @Transactional обеспечивает управление транзакциями в методе. Это означает, что все операции в методе будут выполнены в рамках одной транзакции базы данных. В случае успешного выполнения всех операций транзакция будет закрыта и изменения зафиксированы в базе данных. Если произойдет ошибка, транзакция будет откатана.
     public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
         log.info("Был вызван метод создания объявлений из {}", AdService.class.getSimpleName());
-        //User user = userService.getUser(authentication.getName());
+        User user = userService.getUser(authentication.getName());
         Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
 
-        //ads.setAuthor(user);
+        ads.setAuthor(user);
 
         Ad savedAds = adRepository.save(ads);
 
