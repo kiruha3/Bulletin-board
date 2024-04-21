@@ -5,14 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
+import ru.skypro.homework.entity.Image;
+import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.AuthoritiesService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
@@ -20,6 +24,7 @@ import ru.skypro.homework.service.UserService;
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
+    private final AuthoritiesService authoritiesService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ImageService imageService;
@@ -35,8 +40,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerUser(User user) {
+    public void registerUser(User user, Role role) {
         user.setEnabled(true);
+        authoritiesService.addAuthorities(user, role);
         userRepository.save(user);
     }
 
@@ -68,6 +74,16 @@ public class UserServiceImpl implements UserService {
         User infoToUpdate = userMapper.updateNewPasswordDtoToUser(body);
 
         user.setPassword(encoder.encode(infoToUpdate.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void uploadImage(MultipartFile imageMultipart, Authentication authentication) {
+        User user = getUser(authentication.getName());
+
+        Image image = imageService.addImage(imageMultipart);
+        user.setImage(image);
+
         userRepository.save(user);
     }
 }

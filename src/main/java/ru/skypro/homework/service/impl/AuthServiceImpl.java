@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.user.RegisterDto;
 import ru.skypro.homework.mapper.RegisterMapper;
 import ru.skypro.homework.service.AuthService;
-import ru.skypro.homework.service.AuthoritiesService;
 import ru.skypro.homework.service.UserService;
 
 @Service
@@ -18,7 +17,6 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final RegisterMapper registerMapper;
     private final UserService userService;
-    private final AuthoritiesService authoritiesService;
 
     @Override
     public boolean login(String userName, String password) {
@@ -40,8 +38,7 @@ public class AuthServiceImpl implements AuthService {
 
         user.setPassword(encoder.encode(user.getPassword()));
 
-        userService.registerUser(user);
-        authoritiesService.addAuthorities(user);
+        userService.registerUser(user, registerDto.getRole());
 
         return true;
     }

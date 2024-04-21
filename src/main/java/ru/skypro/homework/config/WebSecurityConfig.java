@@ -29,7 +29,7 @@ public class WebSecurityConfig {
             "/register",
             "/ads",
             "/ads/*/image",
-            "/user/*/image"
+            "/users/*/image"
     };
 
     @Bean

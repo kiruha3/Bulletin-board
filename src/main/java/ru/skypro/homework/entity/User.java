@@ -23,8 +23,6 @@ public class User {
     private String username;
     private String password;
     private boolean enabled;
-    @Enumerated(EnumType.STRING)
-    private Role role;
     @OneToOne
     private Image image;
 }
