@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Ad;
-//import ru.skypro.homework.entity.User;
+import ru.skypro.homework.entity.User;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.AdService;
@@ -30,24 +30,25 @@ public class CommentServiceImpl implements CommentService {
     private final UserService userService;
 
     @Override
-    public CommentsDto getAllCommentsForAdsWithId(Long adsId) {
-        return null;
+    public CommentsDto getAllCommentsForAd(Integer adId) {
+        return commentMapper.commentsToCommentsDto(commentRepository.findAllByAdId(adId));
     }
 
     @Override
     public CommentDto createNewComment(Integer adsId, CreateOrUpdateCommentDto commentDto, Authentication authentication) {
         log.info("Был вызван метод создания нового комментария", CommentService.class.getSimpleName());
-        //User user = userService.getUser(authentication.getName());
-        Ad adsById = adService.getAdsById(adsId);
+        User user = userService.getUser(authentication.getName());
+        Ad adsById = adService.getAdById(adsId);
         Comment comment = commentMapper.createOrUpdateCommmentDtoToComment(commentDto);
-        //comment.setAuthor(user);
-        //comment.setAuthorFirstName(user.getFirstName());
+        comment.setAuthor(user);
+        comment.setAuthorFirstName(user.getFirstName());
         comment.setCreatedAt(Instant.now().toEpochMilli());
         comment.setAd(adsById);
         Comment savedComment = commentRepository.save(comment);
         return commentMapper.commentToCommentDto(savedComment);
     }
 
+    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public CommentDto getComments(Integer adPk, Integer id) {
         Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
@@ -55,14 +56,15 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToCommentDto(comment);
     }
 
+    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public void deleteComments(Integer adPk, Integer id) {
         Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
                 .orElseThrow(CommentNotFoundException::new);
         commentRepository.delete(comment);
-
     }
 
+    //TODO: Проверить на работоспособность и переписать. Достаточно commentId
     @Override
     public CommentDto updateComments(Integer adPk, Integer id, CommentDto commentDto) {
         Comment comment = commentRepository.findCommentByIdAndAuthorId(adPk, id)
@@ -71,5 +73,4 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
         return commentMapper.commentToCommentDto(comment);
     }
-
 }

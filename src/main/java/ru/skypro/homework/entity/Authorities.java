@@ -1,21 +1,21 @@
 package ru.skypro.homework.entity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
-public class Image {
+@RequiredArgsConstructor
+@Entity
+public class Authorities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String filePath;
-    private String mediaType;
+    private String username;
+    private String authority;
 }

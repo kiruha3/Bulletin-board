@@ -3,8 +3,6 @@ package ru.skypro.homework.dto.ad;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 
 public class ExtendedAdDto {
@@ -24,8 +22,8 @@ public class ExtendedAdDto {
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("images")
-    private List<String> image;
+    @JsonProperty("image")
+    private String image;
 
     @JsonProperty("phone")
     private String phone;

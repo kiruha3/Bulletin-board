@@ -1,4 +1,4 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.dto.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 

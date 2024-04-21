@@ -25,8 +25,6 @@ public class Ad {
     private Image image;
     private String description;
     private LocalDateTime dateTime;
-    @OneToMany(mappedBy = "ad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Image> images;
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL)
     private List<Comment> comments;
 }
