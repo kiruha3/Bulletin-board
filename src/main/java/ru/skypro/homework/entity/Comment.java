@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -15,14 +14,11 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    //private Integer count;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
-    @OneToOne
-    private Image authorImage;
     private String authorFirstName;
-    private Long createdAt;  // TODO нужно LocalDateTime
+    private Long createdAt;
     private String text;
     @ManyToOne
     @JoinColumn(name = "ad_id")

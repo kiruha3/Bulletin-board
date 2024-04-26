@@ -1,6 +1,5 @@
 package ru.skypro.homework.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.CommentService;
 
 import javax.annotation.processing.Generated;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-06T11:46:42.537169258Z[GMT]")
@@ -30,17 +28,13 @@ import javax.validation.Valid;
 public class AdsApiController {
     private static final Logger log = LoggerFactory.getLogger(AdsApiController.class);
 
-    private final ObjectMapper objectMapper;
     private final AdService adService;
     private final CommentService commentService;
-    private final HttpServletRequest request;
 
     @Autowired
-    public AdsApiController(ObjectMapper objectMapper, AdService adService, CommentService commentService, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
+    public AdsApiController(AdService adService, CommentService commentService) {
         this.adService = adService;
         this.commentService = commentService;
-        this.request = request;
     }
 
     // Этот метод позволяет создавать новые объявления, принимая данные о свойствах и изображении, и возвращая результат в соответствии с ожидаемым типом ответа.
@@ -68,16 +62,16 @@ public class AdsApiController {
         return ResponseEntity.ok(adService.getAllAds());
     }
 
+    @PreAuthorize("@userSecurity.isAdsAuthor(#id) or hasAuthority('ADMIN')")
     @DeleteMapping(value = "/ads/{id}")
-    @PreAuthorize("@userSecurity.isAdsAuthor(#id) or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> removeAd(@PathVariable("id") Integer id) {
         log.info("\n" + "Был вызван метод удаления объявления с помощью id = {}", id);
         adService.deletedAd(id);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("@userSecurity.isAdsAuthor(#id) or hasAuthority('ADMIN')")
     @PatchMapping(value = "/ads/{id}")
-    @PreAuthorize("@userSecurity.isAdsAuthor(#id) or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<AdDto> updateAds(@PathVariable("id") Integer id, @Valid @RequestBody CreateOrUpdateAdDto body) {
         log.info("\n" + "Был вызван метод обновления объявления по id = {}", id);
         return ResponseEntity.ok(adService.updateAd(id, body));
@@ -105,18 +99,18 @@ public class AdsApiController {
         return ResponseEntity.ok(commentService.createNewComment(id, body, authentication));
     }
 
-    @PreAuthorize("@userSecurity.isCommentAuthor(#id) or hasAuthority('ROLE_ADMIN')")
-    @PatchMapping("/ads/{adId}/comments/{commentId}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CommentDto body) { //TODO разобраться с подменой тела CreateOrUpdateCommentDto body)
-        log.info("Было вызвано  обновление объявление = {} в комментарии id = {}", adId, commentId);
-        return ResponseEntity.ok(commentService.updateComments(adId, commentId, body));
+    @PreAuthorize("@userSecurity.isCommentAuthor(#commentId) or hasAuthority('ADMIN')")
+    @PatchMapping("/ads/{id}/comments/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable("id") Integer id, @PathVariable("commentId") Integer commentId, @Valid @RequestBody CreateOrUpdateCommentDto body) {
+        log.info("Было вызвано  обновление объявление = {} в комментарии id = {}", id, commentId);
+        return ResponseEntity.ok(commentService.updateComments( commentId, body));
     }
 
-    @PreAuthorize("@userSecurity.isCommentAuthor(#id) or hasAuthority('ROLE_ADMIN')")
-    @DeleteMapping("/ads/{adId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("adId") Integer adId, @PathVariable("commentId") Integer commentId) {
+    @PreAuthorize("@userSecurity.isCommentAuthor(#commentId) or hasAuthority('ADMIN')")
+    @DeleteMapping("/ads/{id}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Integer adId, @PathVariable("commentId") Integer commentId) {
         log.info("Was invoked delete ad's comment by id = {} method", commentId);
-        commentService.deleteComments(adId, commentId);
+        commentService.deleteComments( commentId);
         return ResponseEntity.ok().build();
     }
 }
