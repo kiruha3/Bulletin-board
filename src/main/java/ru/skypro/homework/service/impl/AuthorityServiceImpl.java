@@ -21,4 +21,11 @@ public class AuthorityServiceImpl implements AuthoritiesService {
 
         authoritiesRepository.save(authorities);
     }
+    @Override
+    public String getAuthorities(User user) {
+        Authorities authorities = new Authorities();
+        authorities.setUsername(user.getUsername());
+        authorities.setAuthority(authoritiesRepository.findByUsername(user.getUsername()).get().getAuthority());
+        return authorities.getAuthority();
+    }
 }

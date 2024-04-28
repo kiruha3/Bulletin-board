@@ -5,4 +5,6 @@ import ru.skypro.homework.entity.User;
 
 public interface AuthoritiesService {
     void addAuthorities(User user, Role role);
+
+    String getAuthorities(User user);
 }
