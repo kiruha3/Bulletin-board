@@ -14,7 +14,8 @@ import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.impl.AuthorityServiceImpl;
 import ru.skypro.homework.entity.Role;
 @Component
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+        imports = {Role.class})
 public abstract class UserMapper {
     @Autowired
     ImageService imageService;
@@ -24,26 +25,9 @@ public abstract class UserMapper {
     UserRepository userRepository;
     @Autowired
     AuthoritiesRepository authoritiesRepository;
-//    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(user.getId()))")
-//    @Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))")
-    public UserDto userToUserDto(User user){
-        if ( user == null ) {
-            return null;
-        }
-
-        UserDto userDto = new UserDto();
-
-        userDto.setId( user.getId() );
-        userDto.setEmail( user.getEmail() );
-        userDto.setFirstName( user.getFirstName() );
-        userDto.setLastName( user.getLastName() );
-        userDto.setPhone( user.getPhone() );
-
-        userDto.setImage( imageService.getUserImageUrl(user.getId()) );
-        userDto.setRole( Role.valueOf(authorityService.getAuthorities(user)) );
-
-        return userDto;
-    };
+    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(user.getId()))")
+    @Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))")
+    public abstract UserDto userToUserDto(User user);
 
     public abstract User updateUserDtoToUser(UpdateUserDto updateUserDto);
 
