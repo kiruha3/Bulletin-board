@@ -23,4 +23,8 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "ad_id")
     private Ad ad;
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt / 1000 * 1000;
+    }
 }
