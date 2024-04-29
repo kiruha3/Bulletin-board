@@ -11,14 +11,17 @@ import ru.skypro.homework.dto.ad.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.service.impl.ImageServiceImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+    imports = LocalDateTime.class)
 public abstract class AdMapper {
     @Autowired
     ImageServiceImpl imageService;
+    @Mapping(target = "dateTime", expression = "java(LocalDateTime.now())")
     public abstract Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);
 
     @Mapping(target = "author", expression = "java(ad.getAuthor().getId())")

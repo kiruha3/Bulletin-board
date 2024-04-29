@@ -96,7 +96,7 @@ public class AdsApiController {
     @PostMapping("/ads/{id}/comments")
     public ResponseEntity<CommentDto> addComment(@PathVariable("id") Integer id, @Valid @RequestBody CreateOrUpdateCommentDto body, Authentication authentication) {
         log.info("Был вызван запрос на добавление комментария для объявления = {} ", id);
-        return ResponseEntity.ok(commentService.createNewComment(id, body, authentication));
+        return new ResponseEntity<>(commentService.createNewComment(id, body, authentication), HttpStatus.CREATED);
     }
 
     @PreAuthorize("@userSecurity.isCommentAuthor(#commentId) or hasAuthority('ADMIN')")

@@ -18,6 +18,7 @@ import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.service.UserService;
 
 import java.time.Instant;
+import java.util.ArrayList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentsDto getAllCommentsForAd(Integer adId) {
-        return commentMapper.commentsToCommentsDto(commentRepository.findAllByAdId(adId));
+        return commentMapper.commentsToCommentsDto(commentRepository.findAllByAdId(adId).orElse(new ArrayList<>()));
     }
 
     @Override
